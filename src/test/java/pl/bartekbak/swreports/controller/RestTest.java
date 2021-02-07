@@ -1,6 +1,5 @@
 package pl.bartekbak.swreports.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,11 +8,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pl.bartekbak.swreports.DTO.QueryDTO;
 import pl.bartekbak.swreports.DTO.ReportDTO;
@@ -23,17 +20,19 @@ import pl.bartekbak.swreports.service.RestResponseExceptionHandler;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith({MockitoExtension.class})
+@ExtendWith(MockitoExtension.class)
 class RestTest {
 
     @Mock
@@ -51,7 +50,7 @@ class RestTest {
     @BeforeEach
     void setUp() {
         report = ReportDTO.builder()
-                .reportId(1l)
+                .reportId(1L)
                 .build();
         query = QueryDTO.builder()
                 .build();
@@ -66,7 +65,7 @@ class RestTest {
     @Test
     void putReport_shouldReturnStatusNoContent() throws Exception {
         //given
-        when(service.createReport(any(QueryDTO.class))).thenReturn("ok");
+        when(service.createReport(any(QueryDTO.class))).thenReturn(report);
         when(service.putReport(any(ReportDTO.class))).thenReturn("ok");
         //when
         mockMvc.perform(put("/reports/1")
@@ -89,7 +88,7 @@ class RestTest {
                 .andExpect(status().isOk())
                 .andReturn();
         //then
-        verify(service, times(1)).deleteReportById(1l);
+        verify(service, times(1)).deleteReportById(1L);
     }
     @Test
     void deleteReportById_shouldReturnResourceNotFoundStatus() throws Exception {
@@ -100,7 +99,7 @@ class RestTest {
                 .andExpect(status().isNotFound())
                 .andReturn();
         //then
-        verify(service, times(1)).deleteReportById(1l);
+        verify(service, times(1)).deleteReportById(1L);
     }
 
     @Test
@@ -120,16 +119,16 @@ class RestTest {
         //given
         when(service.getReportById(anyLong())).thenReturn(report);
         //when
-        final MvcResult mvcResult = mockMvc.perform(get("reports/1")
+        final MvcResult mvcResult = mockMvc.perform(get("/reports/1")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
         //then
         final ReportDTO result = objectMapper
-                .readValue(mvcResult.getResponse().getContentAsByteArray(), new TypeReference<ReportDTO>() {
+                .readValue(mvcResult.getResponse().getContentAsByteArray(), new TypeReference<>() {
                 });
         assertEquals(report, result);
-        verify(service, times(1)).getReportById(1l);
+        verify(service, times(1)).getReportById(1L);
     }
 
     @Test
@@ -137,32 +136,30 @@ class RestTest {
         //given
         when(service.getReportById(anyLong())).thenThrow(ResourceNotFoundException.class);
         //when
-        final MvcResult mvcResult = mockMvc.perform(get("reports/1")
+        mockMvc.perform(get("/reports/1")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn();
         //then
-        final ReportDTO result = objectMapper
-                .readValue(mvcResult.getResponse().getContentAsByteArray(), new TypeReference<ReportDTO>() {
-                });
-        assertEquals(report, result);
-        verify(service, times(1)).getReportById(1l);
+        verify(service, times(1)).getReportById(1L);
     }
 
     @Test
     void getAllReports_shouldReturnList() throws Exception {
         //given
-        when(service.getAllReports()).thenReturn(List.of(report));
+        List<ReportDTO> reportDTOList = List.of(report, report);
+        when(service.getAllReports()).thenReturn(reportDTOList);
         //when
-        final MvcResult mvcResult = mockMvc.perform(get("reports")
+        final MvcResult mvcResult = mockMvc.perform(get("/reports")
+                .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
         //then
         final List<ReportDTO> result = objectMapper
-                .readValue(mvcResult.getResponse().getContentAsByteArray(), new TypeReference<List<ReportDTO>>() {
+                .readValue(mvcResult.getResponse().getContentAsByteArray(), new TypeReference<>() {
                 });
-        assertEquals(List.of(report), result);
+        assertEquals(reportDTOList, result);
         verify(service, times(1)).getAllReports();
     }
 }
