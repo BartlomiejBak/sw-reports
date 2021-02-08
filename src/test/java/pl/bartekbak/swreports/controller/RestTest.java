@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import pl.bartekbak.swreports.dto.Query;
 import pl.bartekbak.swreports.dto.Report;
+import pl.bartekbak.swreports.exception.InvalidQueryException;
 import pl.bartekbak.swreports.exception.ResourceNotFoundException;
 import pl.bartekbak.swreports.service.controller.ReportService;
 import pl.bartekbak.swreports.service.RestResponseExceptionHandler;
@@ -76,6 +77,21 @@ class RestTest {
                 .andReturn();
         //then
         verify(service, times(1)).putReport(any(Report.class));
+        verify(service, times(1)).createReport(any(Query.class));
+    }
+
+    @Test
+    void putReport_shouldReturnStatusBadRequest() throws Exception {
+        //given
+        when(service.createReport(any(Query.class))).thenThrow(InvalidQueryException.class);
+        //when
+        mockMvc.perform(put("/reports/1")
+                    .content(objectMapper.writeValueAsString(query))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        //then
         verify(service, times(1)).createReport(any(Query.class));
     }
 
