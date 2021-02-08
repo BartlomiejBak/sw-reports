@@ -12,10 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import pl.bartekbak.swreports.DTO.QueryDTO;
-import pl.bartekbak.swreports.DTO.ReportDTO;
+import pl.bartekbak.swreports.dto.Query;
+import pl.bartekbak.swreports.dto.Report;
 import pl.bartekbak.swreports.exception.ResourceNotFoundException;
-import pl.bartekbak.swreports.service.ReportService;
+import pl.bartekbak.swreports.service.controller.ReportService;
 import pl.bartekbak.swreports.service.RestResponseExceptionHandler;
 
 import java.util.List;
@@ -44,15 +44,15 @@ class RestTest {
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
 
-    private ReportDTO report;
-    private QueryDTO query;
+    private Report report;
+    private Query query;
 
     @BeforeEach
     void setUp() {
-        report = ReportDTO.builder()
+        report = Report.builder()
                 .reportId(1L)
                 .build();
-        query = QueryDTO.builder()
+        query = Query.builder()
                 .build();
 
         mockMvc = MockMvcBuilders
@@ -65,8 +65,8 @@ class RestTest {
     @Test
     void putReport_shouldReturnStatusNoContent() throws Exception {
         //given
-        when(service.createReport(any(QueryDTO.class))).thenReturn(report);
-        when(service.putReport(any(ReportDTO.class))).thenReturn("ok");
+        when(service.createReport(any(Query.class))).thenReturn(report);
+        when(service.putReport(any(Report.class))).thenReturn("ok");
         //when
         mockMvc.perform(put("/reports/1")
                     .content(objectMapper.writeValueAsString(query))
@@ -75,8 +75,8 @@ class RestTest {
                 .andExpect(status().isNoContent())
                 .andReturn();
         //then
-        verify(service, times(1)).putReport(any(ReportDTO.class));
-        verify(service, times(1)).createReport(any(QueryDTO.class));
+        verify(service, times(1)).putReport(any(Report.class));
+        verify(service, times(1)).createReport(any(Query.class));
     }
 
     @Test
@@ -124,7 +124,7 @@ class RestTest {
                 .andExpect(status().isOk())
                 .andReturn();
         //then
-        final ReportDTO result = objectMapper
+        final Report result = objectMapper
                 .readValue(mvcResult.getResponse().getContentAsByteArray(), new TypeReference<>() {
                 });
         assertEquals(report, result);
@@ -147,8 +147,8 @@ class RestTest {
     @Test
     void getAllReports_shouldReturnList() throws Exception {
         //given
-        List<ReportDTO> reportDTOList = List.of(report, report);
-        when(service.getAllReports()).thenReturn(reportDTOList);
+        List<Report> reportList = List.of(report, report);
+        when(service.getAllReports()).thenReturn(reportList);
         //when
         final MvcResult mvcResult = mockMvc.perform(get("/reports")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -156,10 +156,10 @@ class RestTest {
                 .andExpect(status().isOk())
                 .andReturn();
         //then
-        final List<ReportDTO> result = objectMapper
+        final List<Report> result = objectMapper
                 .readValue(mvcResult.getResponse().getContentAsByteArray(), new TypeReference<>() {
                 });
-        assertEquals(reportDTOList, result);
+        assertEquals(reportList, result);
         verify(service, times(1)).getAllReports();
     }
 }
