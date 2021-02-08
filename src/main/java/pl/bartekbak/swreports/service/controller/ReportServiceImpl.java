@@ -3,6 +3,7 @@ package pl.bartekbak.swreports.service.controller;
 import org.springframework.stereotype.Service;
 import pl.bartekbak.swreports.dto.Query;
 import pl.bartekbak.swreports.dto.Report;
+import pl.bartekbak.swreports.exception.InvalidQueryException;
 import pl.bartekbak.swreports.exception.ResourceNotFoundException;
 import pl.bartekbak.swreports.repository.ReportRepository;
 import pl.bartekbak.swreports.service.client.QueryClient;
@@ -29,6 +30,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Report createReport(Query query) {
+        if (query.getPlanetQueryCriteria() == null && query.getCharacterQueryCriteria() == null) {
+            throw new InvalidQueryException("No proper parameters");
+        }
         return client.createReport(query);
     }
 
