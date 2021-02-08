@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.bartekbak.swreports.DTO.QueryDTO;
-import pl.bartekbak.swreports.DTO.ReportDTO;
-import pl.bartekbak.swreports.service.ReportService;
+import pl.bartekbak.swreports.dto.Query;
+import pl.bartekbak.swreports.dto.Report;
+import pl.bartekbak.swreports.service.controller.ReportService;
 
 import java.util.List;
 
@@ -26,8 +26,8 @@ public class Rest {
     }
 
     @PutMapping("/{reportId}")
-    public ResponseEntity<HttpStatus> putReport(@PathVariable long reportId, @RequestBody QueryDTO queryDTO) {
-        ReportDTO result = reportService.createReport(queryDTO);
+    public ResponseEntity<HttpStatus> putReport(@PathVariable long reportId, @RequestBody Query query) {
+        Report result = reportService.createReport(query);
         result.setReportId(reportId);
         reportService.putReport(result);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -44,12 +44,12 @@ public class Rest {
     }
 
     @GetMapping("/{reportId}")
-    public ReportDTO getReportById(@PathVariable long reportId) {
+    public Report getReportById(@PathVariable long reportId) {
         return reportService.getReportById(reportId);
     }
 
     @GetMapping
-    public List<ReportDTO> getAllReports(){
+    public List<Report> getAllReports(){
         return reportService.getAllReports();
     }
 }
