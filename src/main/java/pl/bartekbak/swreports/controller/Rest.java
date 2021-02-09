@@ -1,5 +1,6 @@
 package pl.bartekbak.swreports.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,6 +27,7 @@ public class Rest {
     }
 
     @PutMapping("/{reportId}")
+    @ApiOperation(value = "Create or update report")
     public ResponseEntity<HttpStatus> putReport(@PathVariable long reportId, @RequestBody Query query) {
         Report result = reportService.createReport(query);
         result.setReportId(reportId);
@@ -34,21 +36,25 @@ public class Rest {
     }
 
     @DeleteMapping("/{reportId}")
+    @ApiOperation(value = "Delete single report")
     public void deleteReportById(@PathVariable long reportId) {
         reportService.deleteReportById(reportId);
     }
 
     @DeleteMapping
+    @ApiOperation(value = "Delete all reports")
     public void deleteAllReports() {
         reportService.deleteReports();
     }
 
     @GetMapping("/{reportId}")
+    @ApiOperation(value = "Get single report")
     public Report getReportById(@PathVariable long reportId) {
         return reportService.getReportById(reportId);
     }
 
     @GetMapping
+    @ApiOperation(value = "Get all reports")
     public List<Report> getAllReports(){
         return reportService.getAllReports();
     }
