@@ -1,4 +1,4 @@
-package pl.bartekbak.swreports.service;
+package pl.bartekbak.swreports.service.controller;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +10,7 @@ import pl.bartekbak.swreports.dto.Query;
 import pl.bartekbak.swreports.dto.Report;
 import pl.bartekbak.swreports.exception.ResourceNotFoundException;
 import pl.bartekbak.swreports.repository.ReportRepository;
-import pl.bartekbak.swreports.service.client.QueryClient;
-import pl.bartekbak.swreports.service.controller.ReportServiceImpl;
+import pl.bartekbak.swreports.service.consumer.QueryConsumer;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +30,7 @@ class ReportServiceImplTest {
     private ReportRepository repository;
 
     @Mock
-    private QueryClient client;
+    private QueryConsumer client;
 
     @InjectMocks
     private ReportServiceImpl reportService;

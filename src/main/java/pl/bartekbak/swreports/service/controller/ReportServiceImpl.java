@@ -6,7 +6,7 @@ import pl.bartekbak.swreports.dto.Report;
 import pl.bartekbak.swreports.exception.InvalidQueryException;
 import pl.bartekbak.swreports.exception.ResourceNotFoundException;
 import pl.bartekbak.swreports.repository.ReportRepository;
-import pl.bartekbak.swreports.service.client.QueryClient;
+import pl.bartekbak.swreports.service.consumer.QueryConsumer;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,9 +15,9 @@ import java.util.Optional;
 public class ReportServiceImpl implements ReportService {
 
     private final ReportRepository repository;
-    private final QueryClient client;
+    private final QueryConsumer client;
 
-    public ReportServiceImpl(ReportRepository repository, QueryClient client) {
+    public ReportServiceImpl(ReportRepository repository, QueryConsumer client) {
         this.repository = repository;
         this.client = client;
     }
