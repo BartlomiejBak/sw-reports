@@ -12,6 +12,7 @@ import pl.bartekbak.swreports.dto.Person;
 import pl.bartekbak.swreports.dto.Query;
 import pl.bartekbak.swreports.dto.Report;
 import pl.bartekbak.swreports.dto.Result;
+import pl.bartekbak.swreports.exception.QueryProcessingException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +28,11 @@ class QueryConsumerImplTest {
     @Mock
     private PersonToResultConverter converter;
     @Mock
-    private SWApiConsumer apiClient;
+    private SWApiConsumer apiConsumer;
     @InjectMocks
-    private QueryConsumerImpl queryClient;
+    private QueryConsumerImpl queryConsumer;
 
     private Query query;
-    private Person person;
-    private Result result;
     private Report report;
 
     private List<Person> personList = new ArrayList<>();
@@ -48,11 +47,11 @@ class QueryConsumerImplTest {
                 .characterQueryCriteria(character)
                 .planetQueryCriteria(planet)
                 .build();
-        person = Person.builder()
+        Person person = Person.builder()
                 .name(character)
                 .homeworld(planet)
                 .build();
-        result = Result.builder()
+        Result result = Result.builder()
                 .characterName(character)
                 .planetName(planet)
                 .build();
@@ -66,35 +65,35 @@ class QueryConsumerImplTest {
     }
 
     @Test
-    void createReport_shouldReturnReport() throws Exception {
+    void createReport_shouldReturnReport() {
         //given
-        when(apiClient.getPersonList(anyString())).thenReturn(personList);
+        when(apiConsumer.getPersonList(anyString())).thenReturn(personList);
         when(converter.convertToResultList(any(Person.class))).thenReturn(resultList);
         //when
-        final Report result = queryClient.createReport(query);
+        final Report result = queryConsumer.createReport(query);
         //then
         assertEquals(report, result);
     }
 
     @Test
-    void createReport_changedQuery_shouldNotReturnReport() throws Exception {
+    void createReport_changedQuery_shouldNotReturnReport() {
         query.setPlanetQueryCriteria("Naboo");
         //given
-        when(apiClient.getPersonList(anyString())).thenReturn(personList);
+        when(apiConsumer.getPersonList(anyString())).thenReturn(personList);
         when(converter.convertToResultList(any(Person.class))).thenReturn(resultList);
         //when
-        final Report result = queryClient.createReport(query);
+        final Report result = queryConsumer.createReport(query);
         //then
         assertNotEquals(report, result);
     }
 
     @Test
-    void createReport_shouldThrowRuntimeException() throws Exception {
+    void createReport_shouldThrowQueryProcessingException() {
         //given
-        when(apiClient.getPersonList(anyString())).thenThrow(RuntimeException.class);
+        when(apiConsumer.getPersonList(anyString())).thenThrow(QueryProcessingException.class);
         //when
         //then
-        assertThrows(RuntimeException.class, () -> queryClient.createReport(query));
+        assertThrows(QueryProcessingException.class, () -> queryConsumer.createReport(query));
     }
 
 

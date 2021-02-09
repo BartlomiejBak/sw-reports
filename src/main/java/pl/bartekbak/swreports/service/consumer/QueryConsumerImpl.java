@@ -7,6 +7,7 @@ import pl.bartekbak.swreports.dto.Person;
 import pl.bartekbak.swreports.dto.Query;
 import pl.bartekbak.swreports.dto.Report;
 import pl.bartekbak.swreports.dto.Result;
+import pl.bartekbak.swreports.exception.QueryProcessingException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +37,7 @@ public class QueryConsumerImpl implements QueryConsumer {
             List<Person> personList = client.getPersonList(address + characterQuery);
             report.setResultList(getResults(query, personList));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new QueryProcessingException(e.getMessage());
         }
         return report;
     }
