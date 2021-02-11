@@ -1,4 +1,4 @@
-package pl.bartekbak.swreports.converter;
+package pl.bartekbak.swreports.service.converter;
 
 import org.springframework.stereotype.Service;
 import pl.bartekbak.swreports.consumer.SWApiConsumer;

@@ -7,7 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pl.bartekbak.swreports.consumer.SWApiConsumer;
-import pl.bartekbak.swreports.converter.PersonToResultConverter;
+import pl.bartekbak.swreports.service.converter.PersonToResultConverter;
 import pl.bartekbak.swreports.dto.Person;
 import pl.bartekbak.swreports.dto.Planet;
 import pl.bartekbak.swreports.dto.Query;

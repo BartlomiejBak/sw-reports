@@ -1,4 +1,4 @@
-package pl.bartekbak.swreports.converter;
+package pl.bartekbak.swreports.service.converter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +23,7 @@ class PersonToResultPersonToResultConverterImplTest {
 
     @Mock
     private SWApiConsumer consumer;
+
     @InjectMocks
     private PersonToResultConverterImpl converter;
 
