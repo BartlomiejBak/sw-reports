@@ -12,7 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Query {
     @JsonProperty("query_criteria_character_phrase")
-    private String characterQueryCriteria;
+    @Builder.Default
+    private String characterQueryCriteria = "";
     @JsonProperty("query_criteria_planet_name")
-    private String planetQueryCriteria;
+    @Builder.Default
+    private String planetQueryCriteria = "";
 }
