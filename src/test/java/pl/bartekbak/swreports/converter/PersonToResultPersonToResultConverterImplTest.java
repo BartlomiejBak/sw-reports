@@ -19,12 +19,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PersonToResultConverterTest {
+class PersonToResultPersonToResultConverterImplTest {
 
     @Mock
     private SWApiConsumer consumer;
     @InjectMocks
-    private PersonToResultConverter converter;
+    private PersonToResultConverterImpl converter;
 
     private Person anakin;
     private List<Result> results;
@@ -82,7 +82,7 @@ class PersonToResultConverterTest {
     }
 
     @Test
-    void convertAnakinToResultList_shouldReturnResults() throws Exception {
+    void convertAnakinToResultList_shouldReturnResults() {
         //given
         when(consumer.getPlanetName(anyString())).thenReturn(planet);
         when(consumer.getMovieTitle(movieILink)).thenReturn(movieI);
