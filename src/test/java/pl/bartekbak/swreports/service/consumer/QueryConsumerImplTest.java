@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import pl.bartekbak.swreports.consumer.SWApiConsumer;
 import pl.bartekbak.swreports.converter.PersonToResultConverter;
 import pl.bartekbak.swreports.dto.Person;
+import pl.bartekbak.swreports.dto.Planet;
 import pl.bartekbak.swreports.dto.Query;
 import pl.bartekbak.swreports.dto.Report;
 import pl.bartekbak.swreports.dto.Result;
@@ -37,29 +38,35 @@ class QueryConsumerImplTest {
 
     private List<Person> personList = new ArrayList<>();
     private List<Result> resultList = new ArrayList<>();
+    private List<Planet> planetList = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
         String character = "Anakin";
-        String planet = "Tatooine";
+        String planetName = "Tatooine";
 
+        Planet planet = Planet.builder()
+                .name("Tatooine")
+                .url("url/1")
+                .build();
         query = Query.builder()
                 .characterQueryCriteria(character)
-                .planetQueryCriteria(planet)
+                .planetQueryCriteria(planetName)
                 .build();
         Person person = Person.builder()
                 .name(character)
-                .homeworld(planet)
+                .homeworld(planet.getUrl())
                 .build();
         Result result = Result.builder()
                 .characterName(character)
-                .planetName(planet)
+                .planetName(planetName)
                 .build();
         personList = List.of(person);
         resultList = List.of(result);
+        planetList = List.of(planet);
         report = Report.builder()
                 .characterQueryCriteria(character)
-                .planetQueryCriteria(planet)
+                .planetQueryCriteria(planetName)
                 .resultList(resultList)
                 .build();
     }
@@ -67,8 +74,9 @@ class QueryConsumerImplTest {
     @Test
     void createReport_shouldReturnReport() {
         //given
-        when(apiConsumer.getPersonList(anyString())).thenReturn(personList);
+        when(apiConsumer.getPersons(anyString())).thenReturn(personList);
         when(converter.convertToResultList(any(Person.class))).thenReturn(resultList);
+        when(apiConsumer.getPlanets(anyString())).thenReturn(planetList);
         //when
         final Report result = queryConsumer.createReport(query);
         //then
@@ -77,10 +85,11 @@ class QueryConsumerImplTest {
 
     @Test
     void createReport_changedQuery_shouldNotReturnReport() {
-        query.setPlanetQueryCriteria("Naboo");
         //given
-        when(apiConsumer.getPersonList(anyString())).thenReturn(personList);
+        query.setPlanetQueryCriteria("Naboo");
+        when(apiConsumer.getPersons(anyString())).thenReturn(personList);
         when(converter.convertToResultList(any(Person.class))).thenReturn(resultList);
+        when(apiConsumer.getPlanets(anyString())).thenReturn(planetList);
         //when
         final Report result = queryConsumer.createReport(query);
         //then
@@ -90,7 +99,8 @@ class QueryConsumerImplTest {
     @Test
     void createReport_shouldThrowQueryProcessingException() {
         //given
-        when(apiConsumer.getPersonList(anyString())).thenThrow(QueryProcessingException.class);
+        when(apiConsumer.getPlanets(anyString())).thenReturn(planetList);
+        when(apiConsumer.getPersons(anyString())).thenThrow(QueryProcessingException.class);
         //when
         //then
         assertThrows(QueryProcessingException.class, () -> queryConsumer.createReport(query));
